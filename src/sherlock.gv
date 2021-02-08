@@ -1,0 +1,6 @@
+digraph Sherlock {
+    sherlock [id="sherlock", shape="rect", label="Sherlock Holmes"];
+    watson [id="watson", shape="oval", label="John Watson"];
+
+    watson -> sherlock;
+}
