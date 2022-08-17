@@ -1,0 +1,29 @@
+digraph G {
+  graph [nodesep="0.7"];
+  node [shape="rect"];
+  splines="FALSE";
+
+  /* Entities */
+  capabilities [label=<<b>Capabilities</b><br />Single area of application, owned by a single team>]
+  screens [label=<<b>Screens</b><br />Accessible using routes>]
+  routes [label=<<b>Routes</b>>]
+  hooks [label=<<b>Hooks</b><br />Functions which depend on React hooks or other hooks>]
+  components [label=<<b>Components</b><br />Pure components>]
+  containers [label=<<b>Containers</b><br />Components with side-effects>]
+  transforms [label=<<b>Transforms</b><br />Pure functions>]
+  utils [label=<<b>Utils</b><br />Functions with side-effects>]
+  types [label=<<b>Types</b><br />Domain types>]
+
+  /* Relationships */
+  capabilities -> screens
+  screens -> routes
+  screens -> hooks [minlen=2]
+  screens -> components [minlen=3]
+  screens -> containers [minlen=2]
+  screens -> transforms [minlen=3]
+  screens -> utils [minlen=2]
+  screens -> types
+
+  /* Ranks */
+  // { rank=sink; components containers };
+}

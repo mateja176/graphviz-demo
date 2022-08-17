@@ -1,0 +1,43 @@
+digraph G {
+  graph [fontname = "helvetica"];
+  node [fontname = "helvetica"];
+  edge [fontname = "helvetica"];
+  label="Continuous Integration And Deployment"
+  labelloc="t"
+  fontsize = 22
+  splines="FALSE"
+  pad=0.5
+
+  /* Entities */
+  newChanges [shape="rect", label=<<b>New Changes</b>>]
+  verifiedChanges [shape="rect", label=<<b>Verified Changes</b>>]
+  baseImage [shape="rect", label=<<b>Base Image</b><br />Base dependencies>]
+  containerConfiguration [shape="rect", label=<<b>Container Configuration</b>>, xlabel="Dockerfile"]
+  image [shape="rect", label=<<b>Image</b>>]
+  taggedImage [shape="rect", label=<<b>Tagged Image</b><br />Usually based on commit sha>]
+  scannedImage [shape="rect", label=<<b>Scanned Image</b>>]
+  containerRegistry [shape="rect", label=<<b>Private Container Registry</b><br />Stores images>, xlabel="Amazon Elastic Container Registry (ECR)"]
+
+
+  /* Relationships */
+
+  subgraph cluster_ci {
+    label="CI"
+    newChanges -> verifiedChanges[label="run tests, lint etc."]
+  }
+  subgraph cluster_CD {
+    label="CD"
+    subgraph cluster_configuration {
+      verifiedChanges -> baseImage
+      label="Layered Containers"
+      baseImage -> containerConfiguration[label="extended with application specific configuration"]
+    }
+    containerConfiguration -> image[label="build"]
+    image -> taggedImage[label="tag"]
+    taggedImage -> scannedImage[label="intermezzo security scan"]
+    scannedImage -> containerRegistry[label="deploy"]
+    scannedImage -> containerOrchestration
+  }
+
+  /* Ranks */
+}

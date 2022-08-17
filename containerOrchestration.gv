@@ -1,0 +1,47 @@
+digraph G {
+  graph [fontname = "helvetica"];
+  node [fontname = "helvetica"];
+  edge [fontname = "helvetica"];
+  label="Container Orchestration"
+  labelloc="t"
+  fontsize = 22
+  splines="FALSE"
+  pad=0.5
+
+  description [shape="rect", label=<<b>Description</b><br />Defines service memory and CPU requirements and references image and more>]
+  kubectl [shape="rect", label=<<b>Kubernetes CLI</b><br />Handles new descriptions among other things>]
+  controlPlane [shape="rect", label=<<b>Control Plane</b><br />One or more reserved nodes, like controllers>, xlabel=<Controllers monitor infrastructure and reconcile deviations from description>]
+  kublet [shape="rect", label=<<b>Kublet</b><br />Contains a network proxy and container runtime>]
+  workload [shape="rect", label=<<b>Workload</b><br />A pod, a back-end service, a cron job, or a serverless function to name a few>]
+  pod [shape="rect", label=<<b>Pod</b><br />Shared storage and networking for containers>]
+  applicationContainer [shape="rect", label=<<b>Application Container</b><br />Contains business logic>]
+  supportingContainers [shape="rect", label=<<b>Supporting Containers</b>>]
+  logAggregator [shape="rect", label=<<b>Log Aggregator</b>>]
+  observabilityAgent [shape="rect", label=<<b>Observability Agent</b><br />For example Instana>]
+  database [shape="rect", label=<<b>Database</b><br />For pre-production environments>]
+
+  description -> kubectl
+  kubectl -> controlPlane
+  subgraph cluster_controlPlane {
+    label="Control plane"
+  }
+  controlPlane -> kublet[dir="both", label="send and receive signals"]
+  subgraph cluster_clusters {
+    label="Cluster"
+    labelloc="b";
+    subgraph cluster_namespaces {
+      label="Namespace"
+      subgraph cluster_node {
+        label="Node"
+        kublet -> workload
+        workload -> pod
+        pod -> applicationContainer
+        pod -> supportingContainers
+        supportingContainers -> logAggregator
+        supportingContainers -> observabilityAgent
+        supportingContainers -> database
+      }
+    }
+  }
+
+}
